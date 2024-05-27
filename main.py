@@ -45,6 +45,7 @@ else:
             print(f"Invalid feature: {f}. Proceeding without. Valid features are: {FEATURES}")
             features.remove(f)
 
+
 def get_repo_admins(repo_name, api_endpoint, github_pat):
     """Fetches admin details for a given repository."""
     headers = {
@@ -69,6 +70,7 @@ def write_csv_with_admins(filename, data, admin_details):
             admins = admin_details.get(repo_name, [])
             writer.writerow(list(row.values()) + [', '.join(admins)])
 
+
 # Do the things!
 if __name__ == "__main__":
     print("Starting GitHub security report...")
@@ -81,6 +83,7 @@ if __name__ == "__main__":
         repos = [scope_name]  # Replace with actual repo list fetching logic
         for repo in repos:
             admin_details[repo] = get_repo_admins(repo, api_endpoint, github_pat)
+    
     # enterprise scope
     if report_scope == "enterprise":
         # secret scanning
