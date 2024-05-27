@@ -1,13 +1,47 @@
-name: GitHub Advanced Security API to CSV
+name: Run GitHub Advanced Security API to CSV
 
-description: Grab code and secret scanning data from the GitHub Advanced Security API and put it into a CSV file.
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on pushes to the main branch
+  pull_request:
+    branches:
+      - main  # Trigger the workflow on pull requests to the main branch
+  schedule:
+    - cron: '0 0 * * *'  # Schedule the workflow to run daily at midnight
 
-author: Natalie Somersall (@some-natalie)
+jobs:
+  run-security-report:
+    runs-on: ubuntu-latest
 
-runs:
-  using: "docker"
-  image: "Dockerfile"
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-branding:
-  color: purple
-  icon: cloud-drizzle
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # Specify the Python version to use
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run security report script
+      run: python main.py
+
+    - name: Upload CSV reports
+      uses: actions/upload-artifact@v2
+      with:
+        name: security-reports
+        path: |
+          enterprise_secret_scanning.csv
+          enterprise_code_scanning.csv
+          enterprise_dependabot.csv
+          organization_code_scanning.csv
+          organization_dependabot.csv
+          organization_secret_scanning.csv
+          repository_code_scanning.csv
+          repository_dependabot.csv
+          repository_secret_scanning.csv
